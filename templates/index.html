@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>StudyAI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+
+<h2>StudyAI</h2>
+
+<div>
+
+<a href="/diagnostic">
+AP Mastery Coach
+</a>
+
+<a href="/profile">
+<button>
+Profile
+</button>
+</a>
+
+</div>
+
+</nav>
+
+
+<section class="hero">
+
+<h1>Your AI Study Partner</h1>
+
+<p>
+Get help understanding concepts, solving problems, and improving your learning.
+</p>
+
+
+<form method="POST">
+
+<textarea
+name="question"
+placeholder="Ask a homework question..."
+></textarea>
+
+<br><br>
+
+<button class="ask" type="submit">
+Ask AI
+</button>
+
+</form>
+
+
+
+{% if answer %}
+
+<div class="answer">
+
+<h3>Response</h3>
+
+<p>{{ answer }}</p>
+
+</div>
+
+{% endif %}
+
+
+
+<div class="history">
+
+<h2>Previous Questions</h2>
+
+{% for item in history %}
+
+<div class="card">
+
+<h3>{{ item.question }}</h3>
+
+<p>{{ item.answer }}</p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+</section>
+
+
+
+<section class="features">
+
+<div class="card">
+
+📚
+
+<h3>Homework Help</h3>
+
+<p>
+Understand difficult concepts with AI explanations.
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+🧠
+
+<h3>AP Mastery Coach</h3>
+
+<p>
+Diagnose weak AP topics and receive personalized study plans.
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+📈
+
+<h3>Track Progress</h3>
+
+<p>
+Save questions and monitor your improvement over time.
+</p>
+
+</div>
+
+</section>
+
+</body>
+
+</html>

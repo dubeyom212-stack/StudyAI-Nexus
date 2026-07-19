@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AP Mastery Coach</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+    <h2>StudyAI</h2>
+    <a href="/">Home</a>
+</nav>
+
+
+<section class="hero">
+
+<h1>AP Mastery Coach</h1>
+
+<p>
+Find your weak areas and build a personalized AP study plan.
+</p>
+
+
+<form method="POST">
+
+
+<h2>Select AP Course</h2>
+
+<select name="subject" onchange="this.form.submit()">
+
+{% for subject in subjects %}
+
+<option value="{{ subject }}"
+{% if subject == selected_subject %}selected{% endif %}>
+
+{{ subject }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+
+<h2>Rate Your Confidence</h2>
+
+
+{% for topic in topics %}
+
+<p>
+<b>{{ topic }}</b>
+</p>
+
+<select name="{{ topic }}">
+
+<option value="1">
+1 - Struggling
+</option>
+
+<option value="2">
+2 - Need Practice
+</option>
+
+<option value="3">
+3 - Okay
+</option>
+
+<option value="4">
+4 - Strong
+</option>
+
+<option value="5">
+5 - Mastered
+</option>
+
+</select>
+
+<br><br>
+
+{% endfor %}
+
+
+<button class="ask" type="submit" name="analyze">
+Analyze My Weaknesses
+</button>
+
+
+</form>
+
+
+
+{% if weaknesses %}
+
+<div class="answer">
+
+<h2>Your Weak Areas</h2>
+
+{% for item in weaknesses %}
+
+<p>
+🔴 {{ item }}
+</p>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+{% if plan %}
+
+<div class="answer">
+
+<h2>Your Personalized Study Plan</h2>
+
+{% for item in plan %}
+
+<p>
+📚 <b>{{ item.topic }}</b>
+<br>
+{{ item.task }}
+</p>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+</section>
+
+</body>
+
+</html>

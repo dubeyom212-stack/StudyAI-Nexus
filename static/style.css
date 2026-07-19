@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    margin: 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: white;
+}
+
+nav button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+}
+
+.hero {
+    text-align: center;
+    padding: 60px;
+}
+
+.hero h1 {
+    font-size: 48px;
+}
+
+textarea {
+    width: 500px;
+    height: 150px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+}
+
+.ask {
+    display: block;
+    margin: 20px auto;
+    padding: 15px 40px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.answer {
+    background: white;
+    padding: 20px;
+    margin: 30px auto;
+    max-width: 600px;
+    border-radius: 15px;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    width: 200px;
+    border-radius: 15px;
+    text-align: center;
+}

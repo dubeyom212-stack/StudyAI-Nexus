@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>StudyAI Profile</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+
+<body>
+
+<nav>
+
+<h2>StudyAI</h2>
+
+<a href="/">Home</a>
+
+<a href="/diagnostic">AP Coach</a>
+
+</nav>
+
+
+
+<section class="hero">
+
+
+<h1>Create Your Student Profile</h1>
+
+<p>
+Personalize your AP study experience.
+</p>
+
+
+
+<form method="POST">
+
+
+<label>
+Name
+</label>
+
+<br>
+
+<input 
+type="text"
+name="name"
+placeholder="Enter your name"
+required
+>
+
+
+<br><br>
+
+
+<label>
+Grade Level
+</label>
+
+<br>
+
+<select name="grade">
+
+<option>
+Freshman
+</option>
+
+<option>
+Sophomore
+</option>
+
+<option>
+Junior
+</option>
+
+<option>
+Senior
+</option>
+
+</select>
+
+
+<br><br>
+
+
+<label>
+AP Goal
+</label>
+
+<br>
+
+<select name="goal">
+
+<option>
+Score 3+
+</option>
+
+<option>
+Score 4+
+</option>
+
+<option>
+Score 5
+</option>
+
+<option>
+Improve my understanding
+</option>
+
+</select>
+
+
+<br><br>
+
+
+<button class="ask" type="submit">
+
+Create Profile
+
+</button>
+
+
+</form>
+
+
+
+
+{% if students %}
+
+
+<div class="answer">
+
+
+<h2>Saved Students</h2>
+
+
+{% for student in students %}
+
+<p>
+
+<b>{{ student.name }}</b>
+
+<br>
+
+Grade: {{ student.grade }}
+
+<br>
+
+Goal: {{ student.goal }}
+
+</p>
+
+
+{% endfor %}
+
+
+</div>
+
+
+{% endif %}
+
+
+
+</section>
+
+
+</body>
+
+</html>
