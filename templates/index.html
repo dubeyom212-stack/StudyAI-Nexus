@@ -2,12 +2,16 @@
 <html>
 
 <head>
-    <title>StudyAI</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<title>StudyAI Command Center</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
+
 <body>
+
 
 <nav>
 
@@ -15,127 +19,324 @@
 
 <div>
 
-<a href="/diagnostic">
-AP Mastery Coach
-</a>
+<a href="/">Dashboard</a>
 
-<a href="/profile">
-<button>
-Profile
-</button>
-</a>
+<a href="/diagnostic">AP Mastery Coach</a>
+
+<a href="/about">About</a>
+
+
+{% if current_user.is_authenticated %}
+
+<a href="/profile">Profile</a>
+
+<a href="/logout">Logout</a>
+
+
+{% else %}
+
+<a href="/login">Login</a>
+
+<a href="/signup">Sign Up</a>
+
+
+{% endif %}
+
 
 </div>
 
 </nav>
 
 
+
+
+
 <section class="hero">
 
-<h1>Your AI Study Partner</h1>
+
+
+<div class="ai-header">
+
+
+<div class="ai-orb">
+
+<div class="orb-core">
+
+</div>
+
+</div>
+
+
+
+<h1>
+StudyAI Command Center 🚀
+</h1>
+
 
 <p>
-Get help understanding concepts, solving problems, and improving your learning.
+Your personal AI learning intelligence system.
 </p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="dashboard-grid">
+
+
+
+
+
+<div class="answer dashboard-card">
+
+
+<h2>
+🧠 Learning Intelligence
+</h2>
+
+
+<p>
+Analyze your AP knowledge, discover weaknesses, and create personalized strategies.
+</p>
+
+
+<a href="/diagnostic">
+
+<button>
+Launch Diagnostic
+</button>
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="answer dashboard-card">
+
+
+<h2>
+📊 Mastery Score
+</h2>
+
+
+<div class="score-display">
+
+--
+
+</div>
+
+
+<p>
+Complete assessments to unlock your AI readiness score.
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="answer dashboard-card">
+
+
+<h2>
+🎯 AI Mission
+</h2>
+
+
+<p>
+Your next objective:
+</p>
+
+
+<h3>
+Build mastery, not memorization.
+</h3>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="answer ai-panel">
+
+
+<h2>
+🤖 StudyAI Neural Assistant
+</h2>
+
+
+<p>
+Ask questions and receive intelligent explanations.
+</p>
+
+
+
 
 
 <form method="POST">
 
+
 <textarea
+
 name="question"
-placeholder="Ask a homework question..."
+
+placeholder="Ask StudyAI anything..."
+
 ></textarea>
 
-<br><br>
 
-<button class="ask" type="submit">
-Ask AI
+
+<button>
+
+Send to AI
+
 </button>
+
+
 
 </form>
 
 
 
+
+
+
 {% if answer %}
 
-<div class="answer">
 
-<h3>Response</h3>
+<div class="response">
 
-<p>{{ answer }}</p>
+
+<h3>
+AI Analysis
+</h3>
+
+
+<p>
+{{ answer }}
+</p>
+
 
 </div>
+
 
 {% endif %}
 
 
 
-<div class="history">
+</div>
 
-<h2>Previous Questions</h2>
 
-{% for item in history %}
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+⚡ System Modules
+</h2>
+
+
+
+
+<div class="feature-row">
+
+
 
 <div class="card">
 
-<h3>{{ item.question }}</h3>
+<h3>
+🔍 Diagnostic Engine
+</h3>
 
-<p>{{ item.answer }}</p>
+
+<p>
+Detect hidden knowledge gaps.
+</p>
 
 </div>
 
-{% endfor %}
+
+
+
+
+<div class="card">
+
+<h3>
+🧬 Learning Profile
+</h3>
+
+
+<p>
+Understand your learning patterns.
+</p>
 
 </div>
+
+
+
+
+
+<div class="card">
+
+<h3>
+🚀 Growth Engine
+</h3>
+
+
+<p>
+Generate improvement paths.
+</p>
+
+</div>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
 
 
 </section>
 
 
-
-<section class="features">
-
-<div class="card">
-
-📚
-
-<h3>Homework Help</h3>
-
-<p>
-Understand difficult concepts with AI explanations.
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-🧠
-
-<h3>AP Mastery Coach</h3>
-
-<p>
-Diagnose weak AP topics and receive personalized study plans.
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-📈
-
-<h3>Track Progress</h3>
-
-<p>
-Save questions and monitor your improvement over time.
-</p>
-
-</div>
-
-</section>
 
 </body>
 

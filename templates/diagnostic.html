@@ -2,138 +2,592 @@
 <html>
 
 <head>
-    <title>AP Mastery Coach</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<title>AP Mastery Coach | StudyAI</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 
 <body>
 
+
 <nav>
-    <h2>StudyAI</h2>
-    <a href="/">Home</a>
+
+<h2>StudyAI</h2>
+
+<div>
+
+<a href="/">Dashboard</a>
+
+<a href="/diagnostic">AP Mastery Coach</a>
+
+<a href="/about">About</a>
+
+
+{% if current_user.is_authenticated %}
+
+<a href="/profile">Profile</a>
+
+<a href="/logout">Logout</a>
+
+
+{% else %}
+
+<a href="/login">Login</a>
+
+<a href="/signup">Sign Up</a>
+
+
+{% endif %}
+
+
+</div>
+
 </nav>
+
+
+
 
 
 <section class="hero">
 
-<h1>AP Mastery Coach</h1>
+
+<h1>
+🧠 AP Mastery Coach
+</h1>
+
 
 <p>
-Find your weak areas and build a personalized AP study plan.
+Your AI-powered AP diagnostic system. Identify weaknesses, analyze mastery,
+and create a focused improvement strategy.
 </p>
+
+
+
+
 
 
 <form method="POST">
 
 
-<h2>Select AP Course</h2>
+<div class="answer">
+
+
+<h2>
+Select AP Course
+</h2>
+
+
 
 <select name="subject" onchange="this.form.submit()">
 
+
+
 {% for subject in subjects %}
 
+
 <option value="{{ subject }}"
-{% if subject == selected_subject %}selected{% endif %}>
+
+{% if subject == selected_subject %}
+
+selected
+
+{% endif %}
+
+>
 
 {{ subject }}
 
 </option>
 
+
 {% endfor %}
+
+
 
 </select>
 
 
-<h2>Rate Your Confidence</h2>
+</div>
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+Rate Your Topic Confidence
+</h2>
+
+
+<p>
+Be honest. Your AI profile depends on accurate self-assessment.
+</p>
+
+
 
 
 {% for topic in topics %}
 
-<p>
-<b>{{ topic }}</b>
-</p>
+
+
+<div class="topic-box">
+
+
+<label>
+
+{{ topic }}
+
+</label>
+
+
 
 <select name="{{ topic }}">
 
+
 <option value="1">
-1 - Struggling
+1 - Completely unfamiliar
 </option>
+
 
 <option value="2">
-2 - Need Practice
+2 - Need major review
 </option>
+
 
 <option value="3">
-3 - Okay
+3 - Understand basics
 </option>
 
+
 <option value="4">
-4 - Strong
+4 - Comfortable
 </option>
+
 
 <option value="5">
 5 - Mastered
 </option>
 
+
 </select>
 
-<br><br>
+
+
+</div>
+
+
+
 
 {% endfor %}
 
 
-<button class="ask" type="submit" name="analyze">
-Analyze My Weaknesses
+
+
+
+<button type="submit" name="analyze">
+
+Analyze My AP Readiness 🚀
+
 </button>
+
+
+
+</div>
 
 
 </form>
 
 
 
-{% if weaknesses %}
+
+
+
+
+{% if report %}
+
+
+
+
 
 <div class="answer">
 
-<h2>Your Weak Areas</h2>
 
-{% for item in weaknesses %}
+<h2>
+🎓 AP Score Prediction
+</h2>
+
+
+
+<div class="prediction-box">
+
+
+<h1>
+{{ report.prediction.score }}
+</h1>
+
+
 
 <p>
-🔴 {{ item }}
+
+Confidence:
+{{ report.prediction.confidence }}
+
 </p>
 
-{% endfor %}
+
+
+<p>
+
+{{ report.prediction.explanation }}
+
+</p>
+
 
 </div>
 
+
+</div>
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+📊 Readiness Score
+</h2>
+
+
+
+
+<div class="score-circle"
+
+style="--score: {{ report.readiness }}">
+
+
+<div class="score-number">
+
+{{ report.readiness }}%
+
+</div>
+
+
+</div>
+
+
+
+<p>
+Your score represents your current estimated mastery level.
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+🧠 Learning Profile
+</h2>
+
+
+<p>
+
+{{ report.profile }}
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+💪 Your Strengths
+</h2>
+
+
+
+{% if report.strengths %}
+
+
+<ul>
+
+
+{% for item in report.strengths %}
+
+
+<li>
+{{ item }}
+</li>
+
+
+{% endfor %}
+
+
+</ul>
+
+
+{% else %}
+
+
+<p>
+No strong areas detected yet. Keep building your foundation.
+</p>
+
+
 {% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+⚠️ Weak Areas
+</h2>
+
+
+
+{% if report.weaknesses %}
+
+
+<ul>
+
+
+{% for item in report.weaknesses %}
+
+
+<li>
+{{ item }}
+</li>
+
+
+{% endfor %}
+
+
+</ul>
+
+
+{% else %}
+
+
+<p>
+No major weaknesses detected.
+</p>
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+{% if report.root_causes %}
+
+
+
+<div class="answer">
+
+
+<h2>
+🔍 Root Cause Analysis
+</h2>
+
+
+
+
+{% for item in report.root_causes %}
+
+
+
+<div class="card">
+
+
+<h3>
+{{ item.topic }}
+</h3>
+
+
+<p>
+Recommended improvement areas:
+</p>
+
+
+
+<ul>
+
+
+{% for skill in item.requires %}
+
+
+<li>
+{{ skill }}
+</li>
+
+
+{% endfor %}
+
+
+</ul>
+
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+
+</div>
+
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+🎯 Personalized AI Strategy
+</h2>
+
+
+
+<p>
+
+{{ report.recommendation }}
+
+</p>
+
+
+
+</div>
+
+
+
+
 
 
 
 {% if plan %}
 
+
+
 <div class="answer">
 
-<h2>Your Personalized Study Plan</h2>
+
+<h2>
+📅 Your Study Roadmap
+</h2>
+
+
+
 
 {% for item in plan %}
 
+
+
+
+<div class="card">
+
+
+<h3>
+
+{{ item.topic }}
+
+</h3>
+
+
 <p>
-📚 <b>{{ item.topic }}</b>
-<br>
+
 {{ item.task }}
+
 </p>
+
+
+</div>
+
+
+
 
 {% endfor %}
 
+
+
+
 </div>
+
+
+
 
 {% endif %}
 
 
+
+
+
+
+
+{% endif %}
+
+
+
+
+
 </section>
 
+
 </body>
+
 
 </html>
