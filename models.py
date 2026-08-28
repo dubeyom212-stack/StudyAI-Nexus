@@ -58,16 +58,10 @@ class Question(db.Model):
         db.String(2000)
     )
 
-
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id")
     )
-
-
-
-
-
 class DiagnosticResult(db.Model):
 
     id = db.Column(
@@ -91,9 +85,24 @@ class DiagnosticResult(db.Model):
     )
 
 
+    strengths = db.Column(
+        db.Text
+    )
+
+
+    weaknesses = db.Column(
+        db.Text
+    )
+
+
+    recommendation = db.Column(
+        db.Text
+    )
+
+
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=db.func.current_timestamp()
     )
 
 
@@ -101,4 +110,7 @@ class DiagnosticResult(db.Model):
         db.Integer,
         db.ForeignKey("user.id")
     )
-    
+
+
+
+

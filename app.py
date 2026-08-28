@@ -14,38 +14,30 @@ from werkzeug.security import (
 )
 
 from models import db, User, Question, DiagnosticResult
-
 from ap_data import ap_topics
 
 
 
-
-
 app = Flask(__name__)
-
 
 app.config["SECRET_KEY"] = "studyai-secret-key"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///studyai.db"
 
 
-
 db.init_app(app)
 
 
 
-
-
-# -------------------------
-# LOGIN SYSTEM
-# -------------------------
+# ==========================
+# LOGIN
+# ==========================
 
 login_manager = LoginManager()
 
 login_manager.init_app(app)
 
 login_manager.login_view = "login"
-
 
 
 
@@ -68,14 +60,53 @@ with app.app_context():
 
 
 
-# -------------------------
+# ==========================
 # HOME DASHBOARD
-# -------------------------
+# ==========================
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def home():
 
     answer = ""
+
+    latest_result = None
+
+    ai_insight = None
+
+
+
+    if current_user.is_authenticated:
+
+
+        latest_result = DiagnosticResult.query.filter_by(
+
+            user_id=current_user.id
+
+        ).order_by(
+
+            DiagnosticResult.id.desc()
+
+        ).first()
+
+
+
+        if latest_result:
+
+
+            ai_insight = {
+
+                "strengths": latest_result.strengths,
+
+                "weaknesses": latest_result.weaknesses,
+
+                "recommendation": latest_result.recommendation
+
+            }
+
+
+
+
+
 
 
     if request.method == "POST":
@@ -87,9 +118,9 @@ def home():
 
         answer = (
 
-            "StudyAI is analyzing your question. "
+            "StudyAI analyzed your question. "
 
-            "Your personalized AI explanation will appear here."
+            "Personalized feedback generated."
 
         )
 
@@ -117,11 +148,16 @@ def home():
 
 
 
+
     return render_template(
 
         "index.html",
 
-        answer=answer
+        answer=answer,
+
+        latest_result=latest_result,
+
+        ai_insight=ai_insight
 
     )
 
@@ -133,28 +169,27 @@ def home():
 
 
 
-# -------------------------
+# ==========================
 # SIGNUP
-# -------------------------
+# ==========================
 
-@app.route("/signup", methods=["GET", "POST"])
+@app.route("/signup", methods=["GET","POST"])
 def signup():
 
 
     if request.method == "POST":
 
 
-        username = request.form["username"]
+        username=request.form["username"]
 
-        email = request.form["email"]
+        email=request.form["email"]
 
-        password = request.form["password"]
-
-
+        password=request.form["password"]
 
 
 
-        existing_user = User.query.filter_by(
+
+        exists = User.query.filter_by(
 
             email=email
 
@@ -162,12 +197,12 @@ def signup():
 
 
 
-        if existing_user:
+        if exists:
 
 
             flash(
 
-                "An account with this email already exists.",
+                "Account already exists.",
 
                 "error"
 
@@ -183,26 +218,15 @@ def signup():
 
 
 
-
-
-        hashed_password = generate_password_hash(
-
-            password
-
-        )
-
-
-
         user = User(
 
             username=username,
 
             email=email,
 
-            password=hashed_password
+            password=generate_password_hash(password)
 
         )
-
 
 
         db.session.add(user)
@@ -211,25 +235,11 @@ def signup():
 
 
 
-
-
-        flash(
-
-            "Account created successfully! Please login.",
-
-            "success"
-
-        )
-
-
-
         return redirect(
 
             url_for("login")
 
         )
-
-
 
 
 
@@ -248,32 +258,28 @@ def signup():
 
 
 
-# -------------------------
+# ==========================
 # LOGIN
-# -------------------------
+# ==========================
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET","POST"])
 def login():
 
 
-    if request.method == "POST":
+    if request.method=="POST":
+
+
+        email=request.form["email"]
+
+        password=request.form["password"]
 
 
 
-        email = request.form["email"]
-
-        password = request.form["password"]
-
-
-
-
-
-        user = User.query.filter_by(
+        user=User.query.filter_by(
 
             email=email
 
         ).first()
-
 
 
 
@@ -283,7 +289,7 @@ def login():
 
             flash(
 
-                "No account exists with this email.",
+                "No account exists.",
 
                 "error"
 
@@ -295,8 +301,6 @@ def login():
                 url_for("login")
 
             )
-
-
 
 
 
@@ -310,10 +314,9 @@ def login():
         ):
 
 
-
             flash(
 
-                "Incorrect password.",
+                "Wrong password.",
 
                 "error"
 
@@ -328,33 +331,15 @@ def login():
 
 
 
-
-
-
         login_user(user)
-
-
-
-
-
-        flash(
-
-            "Welcome back!",
-
-            "success"
-
-        )
 
 
 
         return redirect(
 
-            url_for("profile")
+            url_for("home")
 
         )
-
-
-
 
 
 
@@ -373,9 +358,9 @@ def login():
 
 
 
-# -------------------------
+# ==========================
 # LOGOUT
-# -------------------------
+# ==========================
 
 @app.route("/logout")
 @login_required
@@ -383,7 +368,6 @@ def logout():
 
 
     logout_user()
-
 
 
     return redirect(
@@ -400,9 +384,9 @@ def logout():
 
 
 
-# -------------------------
+# ==========================
 # PROFILE
-# -------------------------
+# ==========================
 
 @app.route("/profile")
 @login_required
@@ -423,102 +407,142 @@ def profile():
 
 
 
-# -------------------------
+# ==========================
 # DIAGNOSTIC ENGINE
-# -------------------------
+# ==========================
 
-@app.route("/diagnostic", methods=["GET", "POST"])
+@app.route("/diagnostic", methods=["GET","POST"])
 @login_required
 def diagnostic():
 
 
-    selected_subject = list(
-
-        ap_topics.keys()
-
-    )[0]
+    selected_subject=list(ap_topics.keys())[0]
 
 
-
-    topics = ap_topics[selected_subject]
-
+    topics=ap_topics[selected_subject]
 
 
-    report = None
+    report=None
 
 
 
 
 
-
-    if request.method == "POST":
-
+    if request.method=="POST":
 
 
-        selected_subject = request.form.get(
 
-            "subject"
+        selected_subject=request.form["subject"]
+
+
+        topics=ap_topics[selected_subject]
+
+
+
+        scores={}
+
+
+
+        for topic in topics:
+
+
+            scores[topic]=int(
+
+                request.form.get(
+
+                    topic,
+
+                    3
+
+                )
+
+            )
+
+
+
+
+
+        readiness=int(
+
+            (
+
+                sum(scores.values())
+
+                /
+
+                (len(scores)*5)
+
+            )
+
+            *
+
+            100
 
         )
 
 
 
-        topics = ap_topics[selected_subject]
 
 
+        if readiness>=85:
 
+            predicted="5"
 
+        elif readiness>=70:
 
+            predicted="4"
 
-        if "analyze" in request.form:
+        elif readiness>=55:
 
+            predicted="3"
 
+        else:
 
+            predicted="2"
 
-            scores = {}
 
 
 
 
-            for topic in topics:
 
 
+        strengths=[
 
-                scores[topic] = int(
+            x for x,y in scores.items()
 
-                    request.form.get(
+            if y>=4
 
-                        topic,
+        ]
 
-                        3
 
-                    )
 
-                )
+        weaknesses=[
 
+            x for x,y in scores.items()
 
+            if y<=2
 
+        ]
 
 
 
 
-            readiness = int(
 
-                (
+        recommendation=(
 
-                    sum(scores.values())
+            "Study next: "
 
-                    /
+            +
 
-                    (len(scores) * 5)
+            ", ".join(weaknesses)
 
-                )
+            if weaknesses
 
-                *
+            else
 
-                100
+            "Continue advanced practice."
 
-            )
+        )
 
 
 
@@ -526,145 +550,51 @@ def diagnostic():
 
 
 
-            strengths = [
+        result=DiagnosticResult(
 
-                topic
+            subject=selected_subject,
 
-                for topic, score in scores.items()
+            readiness=readiness,
 
-                if score >= 4
+            predicted_score=predicted,
 
-            ]
+            strengths=", ".join(strengths),
 
+            weaknesses=", ".join(weaknesses),
 
+            recommendation=recommendation,
 
+            user_id=current_user.id
 
+        )
 
-            weaknesses = [
 
-                topic
 
-                for topic, score in scores.items()
+        db.session.add(result)
 
-                if score <= 2
+        db.session.commit()
 
-            ]
 
 
 
 
+        report={
 
+            "readiness":readiness,
 
+            "prediction":{
 
-            if readiness >= 85:
+                "score":predicted
 
+            },
 
-                predicted_score = "5"
+            "strengths":strengths,
 
+            "weaknesses":weaknesses,
 
+            "recommendation":recommendation
 
-            elif readiness >= 70:
-
-
-                predicted_score = "4"
-
-
-
-            elif readiness >= 55:
-
-
-                predicted_score = "3"
-
-
-
-            else:
-
-
-                predicted_score = "2"
-
-
-
-
-
-
-
-
-            result = DiagnosticResult(
-
-
-                subject=selected_subject,
-
-
-                readiness=readiness,
-
-
-                predicted_score=predicted_score,
-
-
-                user_id=current_user.id
-
-
-            )
-
-
-
-
-            db.session.add(result)
-
-            db.session.commit()
-
-
-
-
-
-
-
-            report = {
-
-
-                "readiness": readiness,
-
-
-
-                "prediction": {
-
-
-                    "score": predicted_score,
-
-
-                    "confidence": "Estimated",
-
-
-                    "explanation":
-                    "Generated from your AP mastery ratings."
-
-                },
-
-
-
-                "profile":
-
-                "Your learning profile is based on your mastery strengths and weaknesses.",
-
-
-
-                "strengths": strengths,
-
-
-
-                "weaknesses": weaknesses,
-
-
-
-                "root_causes": [],
-
-
-
-                "recommendation":
-
-                "Review weak concepts first, then practice AP-style questions."
-
-            }
+        }
 
 
 
@@ -676,15 +606,11 @@ def diagnostic():
 
         "diagnostic.html",
 
-
         subjects=ap_topics.keys(),
-
 
         selected_subject=selected_subject,
 
-
         topics=topics,
-
 
         report=report
 
@@ -698,13 +624,132 @@ def diagnostic():
 
 
 
-# -------------------------
+# ==========================
+# KNOWLEDGE GALAXY
+# ==========================
+
+@app.route("/galaxy")
+@login_required
+def galaxy():
+
+    latest_result = DiagnosticResult.query.filter_by(
+
+        user_id=current_user.id
+
+    ).order_by(
+
+        DiagnosticResult.id.desc()
+
+    ).first()
+
+
+    topics = []
+
+
+
+    if latest_result:
+
+
+        if latest_result.strengths:
+
+            for topic in latest_result.strengths.split(", "):
+
+                topics.append(topic)
+
+
+
+        if latest_result.weaknesses:
+
+            for topic in latest_result.weaknesses.split(", "):
+
+                topics.append(topic)
+
+
+
+
+
+    return render_template(
+
+        "galaxy.html",
+
+        topics=topics
+
+    )
+
+    latest_result=DiagnosticResult.query.filter_by(
+
+        user_id=current_user.id
+
+    ).order_by(
+
+        DiagnosticResult.id.desc()
+
+    ).first()
+
+
+
+    topics=[]
+
+
+
+    if latest_result:
+
+
+        if latest_result.strengths:
+
+
+            for topic in latest_result.strengths.split(", "):
+
+                topics.append({
+
+                    "name":topic,
+
+                    "level":5
+
+                })
+
+
+
+        if latest_result.weaknesses:
+
+
+            for topic in latest_result.weaknesses.split(", "):
+
+                topics.append({
+
+                    "name":topic,
+
+                    "level":2
+
+                })
+
+
+
+
+
+
+    return render_template(
+
+        "galaxy.html",
+
+        topics=topics
+
+    )
+
+
+
+
+
+
+
+
+
+# ==========================
 # ABOUT
-# -------------------------
+# ==========================
 
 @app.route("/about")
 def about():
-
 
     return render_template(
 
@@ -720,8 +765,6 @@ def about():
 
 
 
-if __name__ == "__main__":
-
+if __name__=="__main__":
 
     app.run(debug=True)
-    

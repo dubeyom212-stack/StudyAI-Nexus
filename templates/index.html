@@ -3,7 +3,7 @@
 
 <head>
 
-<title>StudyAI Command Center</title>
+<title>StudyAI Nexus</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -15,20 +15,23 @@
 
 <nav>
 
-<h2>StudyAI</h2>
+<h2>◎ StudyAI Nexus</h2>
+
 
 <div>
 
 <a href="/">Dashboard</a>
 
-<a href="/diagnostic">AP Mastery Coach</a>
+<a href="/diagnostic">AI Coach</a>
 
-<a href="/about">About</a>
+<a href="/profile">Profile</a>
+
+<a href="/about">Mission</a>
+
+<a href="/galaxy">Galaxy</a>
 
 
 {% if current_user.is_authenticated %}
-
-<a href="/profile">Profile</a>
 
 <a href="/logout">Logout</a>
 
@@ -37,15 +40,16 @@
 
 <a href="/login">Login</a>
 
-<a href="/signup">Sign Up</a>
-
 
 {% endif %}
 
 
 </div>
 
+
 </nav>
+
+
 
 
 
@@ -55,30 +59,54 @@
 
 
 
-<div class="ai-header">
-
-
 <div class="ai-orb">
 
-<div class="orb-core">
+<div class="orb-core"></div>
 
 </div>
 
-</div>
+
 
 
 
 <h1>
-StudyAI Command Center 🚀
+
+StudyAI Nexus
+
 </h1>
 
 
 <p>
-Your personal AI learning intelligence system.
+
+Neural Learning Intelligence System
+
+</p>
+
+
+
+
+
+
+<div class="answer status-card">
+
+
+<h3>
+
+🟣 SYSTEM STATUS
+
+</h3>
+
+
+<p>
+
+AI Engine Online
+
 </p>
 
 
 </div>
+
+
 
 
 
@@ -92,53 +120,38 @@ Your personal AI learning intelligence system.
 
 
 
-<div class="answer dashboard-card">
+<div class="card">
 
 
 <h2>
+
 🧠 Learning Intelligence
+
 </h2>
 
 
-<p>
-Analyze your AP knowledge, discover weaknesses, and create personalized strategies.
-</p>
+<div class="big-number">
 
 
-<a href="/diagnostic">
+{% if latest_result %}
 
-<button>
-Launch Diagnostic
-</button>
+{{ latest_result.readiness }}%
 
-</a>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="answer dashboard-card">
-
-
-<h2>
-📊 Mastery Score
-</h2>
-
-
-<div class="score-display">
+{% else %}
 
 --
 
+{% endif %}
+
+
 </div>
 
 
+
 <p>
-Complete assessments to unlock your AI readiness score.
+
+AP readiness score
+
 </p>
 
 
@@ -150,31 +163,43 @@ Complete assessments to unlock your AI readiness score.
 
 
 
-<div class="answer dashboard-card">
+
+<div class="card">
 
 
 <h2>
-🎯 AI Mission
+
+🎯 AP Prediction
+
 </h2>
 
 
+<div class="big-number">
+
+
+{% if latest_result %}
+
+{{ latest_result.predicted_score }}
+
+
+{% else %}
+
+--
+
+{% endif %}
+
+
+
+</div>
+
+
 <p>
-Your next objective:
+
+Predicted AP score
+
 </p>
 
 
-<h3>
-Build mastery, not memorization.
-</h3>
-
-
-</div>
-
-
-
-
-
-
 </div>
 
 
@@ -183,20 +208,65 @@ Build mastery, not memorization.
 
 
 
-<div class="answer ai-panel">
+
+<div class="card">
 
 
 <h2>
-🤖 StudyAI Neural Assistant
+
+🔥 Progress
+
 </h2>
 
 
+<div class="big-number">
+
+{% if latest_result %}
+
+Active
+
+{% else %}
+
+New
+
+{% endif %}
+
+</div>
+
+
 <p>
-Ask questions and receive intelligent explanations.
+
+Learning journey status
+
 </p>
 
 
+</div>
 
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+
+🤖 Neural Assistant
+
+</h2>
 
 
 <form method="POST">
@@ -214,10 +284,9 @@ placeholder="Ask StudyAI anything..."
 
 <button>
 
-Send to AI
+Send To AI
 
 </button>
-
 
 
 </form>
@@ -225,21 +294,21 @@ Send to AI
 
 
 
-
-
 {% if answer %}
 
-
-<div class="response">
-
+<div class="card">
 
 <h3>
-AI Analysis
+
+Response
+
 </h3>
 
 
 <p>
+
 {{ answer }}
+
 </p>
 
 
@@ -249,8 +318,8 @@ AI Analysis
 {% endif %}
 
 
-
 </div>
+
 
 
 
@@ -263,13 +332,13 @@ AI Analysis
 
 
 <h2>
-⚡ System Modules
+
+⚡ Core Modules
+
 </h2>
 
 
-
-
-<div class="feature-row">
+<div class="dashboard-grid">
 
 
 
@@ -279,9 +348,23 @@ AI Analysis
 🔍 Diagnostic Engine
 </h3>
 
+<p>
+Analyze your AP weaknesses.
+</p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h3>
+🧬 Learning DNA
+</h3>
 
 <p>
-Detect hidden knowledge gaps.
+Understand your learning profile.
 </p>
 
 </div>
@@ -293,13 +376,61 @@ Detect hidden knowledge gaps.
 <div class="card">
 
 <h3>
-🧬 Learning Profile
+🌌 Knowledge Galaxy
+</h3>
+
+<p>
+Visualize mastery.
+</p>
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="answer">
+
+
+<h2>
+
+🧠 Neural Intelligence Report
+
+</h2>
+
+
+
+{% if ai_insight %}
+
+
+
+<div class="dashboard-grid">
+
+
+
+<div class="card">
+
+<h3>
+
+💪 Strength Nodes
+
 </h3>
 
 
 <p>
-Understand your learning patterns.
+
+{{ ai_insight.strengths }}
+
 </p>
+
 
 </div>
 
@@ -310,21 +441,18 @@ Understand your learning patterns.
 <div class="card">
 
 <h3>
-🚀 Growth Engine
+
+⚠ Weak Nodes
+
 </h3>
 
 
 <p>
-Generate improvement paths.
+
+{{ ai_insight.weaknesses }}
+
 </p>
 
-</div>
-
-
-
-
-</div>
-
 
 </div>
 
@@ -332,10 +460,49 @@ Generate improvement paths.
 
 
 
+<div class="card">
 
+<h3>
+
+🎯 AI Mission
+
+</h3>
+
+
+<p>
+
+{{ ai_insight.recommendation }}
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+{% else %}
+
+
+<p>
+
+Complete your first diagnostic to activate AI intelligence.
+
+</p>
+
+
+
+{% endif %}
+
+
+
+</div>
 
 </section>
-
 
 
 </body>

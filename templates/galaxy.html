@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Knowledge Galaxy | StudyAI Nexus</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body class="space">
+
+
+<nav>
+
+<h2>◎ StudyAI Nexus</h2>
+
+<div>
+
+<a href="/">Dashboard</a>
+
+<a href="/diagnostic">AI Coach</a>
+
+<a href="/profile">Profile</a>
+
+<a href="/galaxy">Galaxy</a>
+
+<a href="/about">Mission</a>
+
+</div>
+
+</nav>
+
+
+
+
+<section class="galaxy-page">
+
+
+<h1>
+🌌 Knowledge Galaxy
+</h1>
+
+
+<p>
+Your AI-generated map of knowledge.
+</p>
+
+
+
+
+
+<div class="universe">
+
+
+
+{% if topics %}
+
+
+
+{% for topic in topics %}
+
+
+
+<div class="knowledge-star star{{ loop.index }}">
+
+
+<div class="core">
+
+✦
+
+</div>
+
+
+<span>
+
+{{ topic }}
+
+</span>
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+{% else %}
+
+
+
+<div class="empty-galaxy">
+
+<h2>
+
+No Knowledge Data
+
+</h2>
+
+
+<p>
+
+Complete a diagnostic mission first.
+
+</p>
+
+</div>
+
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+</body>
+
+</html>

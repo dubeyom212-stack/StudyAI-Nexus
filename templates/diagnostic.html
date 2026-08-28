@@ -3,7 +3,7 @@
 
 <head>
 
-<title>AP Mastery Coach | StudyAI</title>
+<title>AI Coach | StudyAI Nexus</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -15,33 +15,19 @@
 
 <nav>
 
-<h2>StudyAI</h2>
+<h2>◎ StudyAI Nexus</h2>
 
 <div>
 
 <a href="/">Dashboard</a>
 
-<a href="/diagnostic">AP Mastery Coach</a>
-
-<a href="/about">About</a>
-
-
-{% if current_user.is_authenticated %}
+<a href="/diagnostic">AI Coach</a>
 
 <a href="/profile">Profile</a>
 
 <a href="/logout">Logout</a>
 
-
-{% else %}
-
-<a href="/login">Login</a>
-
-<a href="/signup">Sign Up</a>
-
-
-{% endif %}
-
+<a href="/galaxy">Galaxy</a>
 
 </div>
 
@@ -54,15 +40,29 @@
 <section class="hero">
 
 
+
+
+
+<div class="answer">
+
+
 <h1>
-🧠 AP Mastery Coach
+
+🧠 AI Mastery Mission
+
 </h1>
 
 
 <p>
-Your AI-powered AP diagnostic system. Identify weaknesses, analyze mastery,
-and create a focused improvement strategy.
+
+Neural assessment engine analyzing your AP readiness.
+
 </p>
+
+
+</div>
+
+
 
 
 
@@ -72,17 +72,21 @@ and create a focused improvement strategy.
 <form method="POST">
 
 
+
+
+
 <div class="answer">
 
 
 <h2>
-Select AP Course
+
+Select Mission
+
 </h2>
 
 
 
-<select name="subject" onchange="this.form.submit()">
-
+<select name="subject">
 
 
 {% for subject in subjects %}
@@ -106,11 +110,13 @@ selected
 {% endfor %}
 
 
-
 </select>
 
 
+
 </div>
+
+
 
 
 
@@ -122,13 +128,26 @@ selected
 
 
 <h2>
-Rate Your Topic Confidence
+
+Knowledge Calibration
+
 </h2>
 
 
 <p>
-Be honest. Your AI profile depends on accurate self-assessment.
+
+Rate your confidence honestly. The AI uses this to build your learning map.
+
 </p>
+
+
+
+
+
+
+
+<div class="dashboard-grid">
+
 
 
 
@@ -137,43 +156,65 @@ Be honest. Your AI profile depends on accurate self-assessment.
 
 
 
-<div class="topic-box">
 
 
-<label>
+<div class="card">
+
+
+<h3>
 
 {{ topic }}
 
-</label>
+</h3>
+
+
+
+<p>
+
+Current Mastery
+
+</p>
 
 
 
 <select name="{{ topic }}">
 
 
+
 <option value="1">
-1 - Completely unfamiliar
+
+🔴 Beginner
+
 </option>
 
 
 <option value="2">
-2 - Need major review
+
+🟠 Developing
+
 </option>
 
 
 <option value="3">
-3 - Understand basics
+
+🟡 Familiar
+
 </option>
 
 
 <option value="4">
-4 - Comfortable
+
+🟢 Strong
+
 </option>
 
 
 <option value="5">
-5 - Mastered
+
+⭐ Mastered
+
 </option>
+
 
 
 </select>
@@ -185,24 +226,43 @@ Be honest. Your AI profile depends on accurate self-assessment.
 
 
 
+
+
 {% endfor %}
 
 
 
 
 
-<button type="submit" name="analyze">
-
-Analyze My AP Readiness 🚀
-
-</button>
+</div>
 
 
 
 </div>
 
 
+
+
+
+
+
+
+
+<button name="analyze">
+
+🚀 Run Neural Analysis
+
+</button>
+
+
+
+
+
+
+
 </form>
+
+
 
 
 
@@ -219,80 +279,76 @@ Analyze My AP Readiness 🚀
 <div class="answer">
 
 
-<h2>
-🎓 AP Score Prediction
-</h2>
-
-
-
-<div class="prediction-box">
-
-
 <h1>
-{{ report.prediction.score }}
+
+AI Report Generated
+
 </h1>
 
 
 
-<p>
-
-Confidence:
-{{ report.prediction.confidence }}
-
-</p>
-
-
-
-<p>
-
-{{ report.prediction.explanation }}
-
-</p>
-
-
-</div>
-
-
-</div>
+<div class="dashboard-grid">
 
 
 
 
 
-
-
-<div class="answer">
+<div class="card">
 
 
 <h2>
-📊 Readiness Score
+
+Readiness
+
 </h2>
 
 
-
-
-<div class="score-circle"
-
-style="--score: {{ report.readiness }}">
-
-
-<div class="score-number">
+<h1>
 
 {{ report.readiness }}%
 
-</div>
+</h1>
 
 
 </div>
 
 
 
-<p>
-Your score represents your current estimated mastery level.
-</p>
+
+
+
+
+<div class="card">
+
+
+<h2>
+
+Predicted Score
+
+</h2>
+
+
+<h1>
+
+{{ report.prediction.score }}
+
+</h1>
 
 
 </div>
+
+
+
+
+
+</div>
+
+
+
+
+</div>
+
+
 
 
 
@@ -304,7 +360,9 @@ Your score represents your current estimated mastery level.
 
 
 <h2>
-🧠 Learning Profile
+
+🧬 Learning Profile
+
 </h2>
 
 
@@ -323,44 +381,30 @@ Your score represents your current estimated mastery level.
 
 
 
+
+
 <div class="answer">
 
 
 <h2>
-💪 Your Strengths
+
+💪 Strength Nodes
+
 </h2>
 
-
-
-{% if report.strengths %}
-
-
-<ul>
 
 
 {% for item in report.strengths %}
 
 
-<li>
+<div class="card">
+
 {{ item }}
-</li>
+
+</div>
 
 
 {% endfor %}
-
-
-</ul>
-
-
-{% else %}
-
-
-<p>
-No strong areas detected yet. Keep building your foundation.
-</p>
-
-
-{% endif %}
 
 
 
@@ -372,120 +416,35 @@ No strong areas detected yet. Keep building your foundation.
 
 
 
+
+
 <div class="answer">
 
 
 <h2>
-⚠️ Weak Areas
+
+⚠ Weak Nodes
+
 </h2>
 
-
-
-{% if report.weaknesses %}
-
-
-<ul>
 
 
 {% for item in report.weaknesses %}
 
 
-<li>
-{{ item }}
-</li>
-
-
-{% endfor %}
-
-
-</ul>
-
-
-{% else %}
-
-
-<p>
-No major weaknesses detected.
-</p>
-
-
-{% endif %}
-
-
-
-</div>
-
-
-
-
-
-
-
-{% if report.root_causes %}
-
-
-
-<div class="answer">
-
-
-<h2>
-🔍 Root Cause Analysis
-</h2>
-
-
-
-
-{% for item in report.root_causes %}
-
-
-
 <div class="card">
 
-
-<h3>
-{{ item.topic }}
-</h3>
-
-
-<p>
-Recommended improvement areas:
-</p>
-
-
-
-<ul>
-
-
-{% for skill in item.requires %}
-
-
-<li>
-{{ skill }}
-</li>
-
-
-{% endfor %}
-
-
-</ul>
-
-
+{{ item }}
 
 </div>
-
 
 
 {% endfor %}
 
 
 
-
 </div>
 
-
-
-
-{% endif %}
 
 
 
@@ -498,9 +457,10 @@ Recommended improvement areas:
 
 
 <h2>
-🎯 Personalized AI Strategy
-</h2>
 
+🎯 AI Mission Recommendation
+
+</h2>
 
 
 <p>
@@ -510,62 +470,9 @@ Recommended improvement areas:
 </p>
 
 
-
 </div>
 
 
-
-
-
-
-
-{% if plan %}
-
-
-
-<div class="answer">
-
-
-<h2>
-📅 Your Study Roadmap
-</h2>
-
-
-
-
-{% for item in plan %}
-
-
-
-
-<div class="card">
-
-
-<h3>
-
-{{ item.topic }}
-
-</h3>
-
-
-<p>
-
-{{ item.task }}
-
-</p>
-
-
-</div>
-
-
-
-
-{% endfor %}
-
-
-
-
-</div>
 
 
 
@@ -575,10 +482,6 @@ Recommended improvement areas:
 
 
 
-
-
-
-{% endif %}
 
 
 
@@ -588,6 +491,5 @@ Recommended improvement areas:
 
 
 </body>
-
 
 </html>
