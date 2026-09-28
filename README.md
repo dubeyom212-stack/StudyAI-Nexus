@@ -1,11 +1,42 @@
 # StudyAI Nexus
 
-A Flask study workspace with 26 AP course topic guides, original AI practice,
-feedback on student work, a mistake notebook, and a study plan based on attempts.
+**Work through a question. Find the missing step. Try again.**
+
+StudyAI Nexus is an AP study workspace built with Flask. It brings together 26
+course topic guides, a local AI tutor, original practice questions, feedback on
+written answers, and a notebook of mistakes to revisit.
+
+The interface uses charcoal backgrounds, acid-yellow task panels, and a course
+list that keeps the next piece of work within reach.
+
+[Get started](#run-locally) · [Local AI](#free-local-ai-with-ollama) ·
+[Configuration](#configuration) · [Troubleshooting](#troubleshooting) ·
+[Contributing](#contributing)
+
+## A typical session
+
+1. Create an account and add the AP courses you are taking.
+2. Pick a topic and generate a foundation, core, or challenge question.
+3. Write your reasoning, using a hint if you need a starting point.
+4. Read feedback against three criteria and compare with the reference solution.
+5. Return to the mistake notebook or follow your next study-plan task.
+
+You can also ask the tutor to explain a step or check your reasoning. Plans use
+recent attempts and optional confidence ratings; they do not predict exam scores.
 
 ## Run locally
 
-Requires Python 3.11 or newer.
+Requires Python 3.11 or newer and Git. Ollama is needed for local AI; accounts,
+course selection, and saved work remain available when AI is offline.
+
+Clone the repository and enter its folder:
+
+```sh
+git clone https://github.com/dubeyom212-stack/StudyAI-Nexus.git
+cd StudyAI-Nexus
+```
+
+### Windows (PowerShell)
 
 ```powershell
 python -m venv .venv
@@ -13,7 +44,15 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m flask --app app:create_app run --port 5055
 ```
 
-Open http://127.0.0.1:5055 and create an account. Accounts and work are stored in
+### macOS / Linux
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m flask --app app:create_app run --port 5055
+```
+
+Open [localhost:5055](http://127.0.0.1:5055) and create an account. Accounts and work are stored in
 `instance/studyai.db`. Existing accounts and old confidence checks are preserved;
 new features use additive tables. Back up an existing database before updating.
 The previously committed database and bytecode are removed from Git tracking,
@@ -56,6 +95,34 @@ recent turns, and relevant practice feedback are sent to the selected provider.
 Names, account emails, and passwords are not included in AI prompts.
 `.env.example` is a reference; `.env` files are not automatically loaded.
 
+## Configuration
+
+Set environment variables before starting Flask. The defaults work for a local
+Ollama installation:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `AI_PROVIDER` | `ollama` | Select `ollama` or `openai`. |
+| `OLLAMA_URL` | `http://127.0.0.1:11434` | Address of the local model server. |
+| `OLLAMA_MODEL` | `qwen3:4b` | Installed model name, including its tag. |
+| `OPENAI_MODEL` | `gpt-4o-mini` | Model used when OpenAI is selected. |
+| `OPENAI_API_KEY` | Empty | Required only for the optional OpenAI provider. |
+| `DATABASE_URL` | `sqlite:///studyai.db` | Database connection; this SQLite path resolves inside `instance/`. |
+| `SECRET_KEY` | Generated locally | Stable session-signing secret for deployment. |
+| `COOKIE_SECURE` | Disabled | Set to `1` when serving over HTTPS. |
+
+For example, to select a different model you have already downloaded:
+
+```powershell
+$env:OLLAMA_MODEL='your-installed-model:tag'
+.\.venv\Scripts\python.exe -m flask --app app:create_app run --port 5055
+```
+
+On macOS/Linux, use `export OLLAMA_MODEL='your-installed-model:tag'` before starting
+Flask. See [.env.example](.env.example) for a reference. Do not commit private keys
+or databases. Keep the same `DATABASE_URL` when restarting to retain access to the
+same accounts and saved work.
+
 ## What students can do
 
 - Browse/search 26 course topic guides and keep selected courses together.
@@ -94,6 +161,35 @@ learning aids, not official AP questions or validated grades.
 - A hosted server needs its own Ollama model or a paid provider connection. This
   computer's local model is not automatically available to a public deployment.
 
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| Local AI is offline | Open Ollama, then use **Check AI connection** in the app footer. Confirm its server address matches `OLLAMA_URL`. |
+| Model not downloaded | Run `ollama list`. If the configured model is missing, run `ollama pull qwen3:4b` or download the model named in `OLLAMA_MODEL`. |
+| Response takes a long time | Local inference depends on available memory and CPU/GPU. A live generation on a 16 GB development laptop took about 65 seconds; this is an example, not a guarantee. |
+| Tutor returns an error | Check the connection, shorten the request, and retry. Submitted practice answers are saved before grading begins. |
+| Accounts seem to be missing | Check `DATABASE_URL` and the database in `instance/`. Starting with a different database does not transfer accounts automatically. |
+| Port 5055 is occupied | Stop the previous development server or use a different `--port` and open that port in the browser. |
+
+Small local models can produce weak questions or incorrect feedback even when the
+connection works. Use class materials and official AP resources to check uncertain
+answers. Automated tests verify app behavior, not subject-matter accuracy.
+
+## Project layout
+
+```text
+app.py                 Routes, authentication, validation, and app factory
+ai_service.py          Ollama/OpenAI adapters and structured response validation
+ap_data.py             AP course topic guides
+learning.py            Plan priority and topic progress logic
+models.py              Accounts, enrollments, attempts, tutor history, usage
+templates/            Server-rendered pages
+static/               Styles, browser behavior, and local KaTeX assets
+tests/                Automated application tests
+instance/             Local data and session key (ignored by Git)
+```
+
 ## Tests
 
 ```powershell
@@ -105,6 +201,21 @@ Automated tests mock provider responses to verify account isolation, confidence
 validation, course switching, error recovery, provider adapters, conversation
 context, feedback persistence, and evidence-based planning. They do not establish
 the educational quality of model-generated questions; perform live model checks too.
+
+## Contributing
+
+Keep each update focused and reviewable:
+
+1. Create a branch from the latest `main`.
+2. Make one coherent change and update the relevant documentation.
+3. Run the tests for behavior changes. Check desktop and mobile layouts for UI changes.
+4. Commit with a message describing what changed, then open a pull request.
+5. Describe the student-facing behavior, how it was checked, and any remaining limitations.
+
+GitHub Actions runs the test suite on pushes and pull requests. Keep local models,
+virtual environments, databases, and secrets out of commits. Changes to AI prompts
+also need live examples: passing mocked tests alone does not demonstrate useful
+feedback or correct questions.
 
 ## References
 
