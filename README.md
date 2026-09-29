@@ -9,9 +9,27 @@ written answers, and a notebook of mistakes to revisit.
 The interface uses charcoal backgrounds, acid-yellow task panels, and a course
 list that keeps the next piece of work within reach.
 
-[Get started](#run-locally) · [Local AI](#free-local-ai-with-ollama) ·
-[Configuration](#configuration) · [Troubleshooting](#troubleshooting) ·
+[Get started](#run-locally) Â· [Local AI](#free-local-ai-with-ollama) Â·
+[Configuration](#configuration) Â· [Troubleshooting](#troubleshooting) Â·
 [Contributing](#contributing)
+
+## Instant quizzes and practice tests
+
+Open **Quizzes & tests** to build a multiple-choice set without a model call.
+Choose 5 or 10 questions; calculus banks also support 20-question mixed sets.
+Question order and answer choices are shuffled, and answers are scored immediately
+on submission. Save an unfinished set, review explanations after submission, and
+retry the exact questions you missed with shuffled options.
+
+Starter banks cover AP Calculus AB, Calculus BC, Biology, Chemistry, Environmental
+Science, and Statistics. Calculus AB and BC currently share fundamentals questions;
+this does not cover the BC-specific syllabus. The 26-course catalog is broader than
+the quiz bank. These original, untimed sets are not full AP exam simulations. Banks
+are finite, so separate sets can repeat questions. Quiz results stay in the recent
+sets list; they do not yet update the written-practice study plan or mistake notebook.
+
+The local AI tutor and single-question written practice remain optional sections.
+Quizzes work with Ollama stopped and without any API key.
 
 ## A typical session
 

@@ -41,6 +41,8 @@ def create_app(test_config=None):
         except FileExistsError:
             pass
         app.config["SECRET_KEY"] = secret_path.read_text()
+    from quizzes import quizzes
+    app.register_blueprint(quizzes)
     db.init_app(app)
     CSRFProtect(app)
     manager = LoginManager(app)

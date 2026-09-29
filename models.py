@@ -152,3 +152,12 @@ class DiagnosticResult(db.Model):
 
 
 
+
+class QuizAttempt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    subject = db.Column(db.String(120), nullable=False)
+    questions = db.Column(db.JSON, nullable=False)
+    answers = db.Column(db.JSON, default=dict, nullable=False)
+    submitted = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)

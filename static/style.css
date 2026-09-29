@@ -749,3 +749,13 @@ html {
   .workspace-grid>aside {
   order:-1}
 }
+.quiz-question { margin: 28px 0; }
+.quiz-question legend { padding: 0 10px; color: var(--orange); font: 12px Consolas, monospace; }
+.quiz-question h2 { font: 500 21px/1.6 'Segoe UI', sans-serif; }
+.quiz-option { display: flex; align-items: baseline; gap: 14px; border: 1px solid var(--line); padding: 15px; font-size: 15px; font-weight: 400; cursor: pointer; }
+.quiz-option input { width: 18px; min-height: 0; flex-shrink: 0; accent-color: var(--green); }
+.quiz-option:has(input:checked) { border-color: var(--green); background: var(--tint); }
+.quiz-correct { border-color: var(--green); background: var(--tint); }
+.quiz-wrong { border-color: var(--orange); }
+.quiz-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin: 24px 0; }
+.quiz-actions form > .button { margin: 0; }

@@ -40,3 +40,16 @@ document.querySelectorAll('form[data-busy]').forEach(form => {
     form.querySelector('[data-status]').textContent = form.dataset.busy + ' Local AI can take a few minutes. Keep this page open.';
   });
 });
+
+const quizTopic = document.querySelector('#quiz-topic');
+if (quizTopic) {
+  const quizCount = document.querySelector('#quiz-count');
+  const updateLengths = () => {
+    const limit = Number(quizTopic.selectedOptions[0].dataset.count);
+    document.querySelector('#quiz-available').textContent = limit;
+    for (const option of quizCount.options) option.disabled = Number(option.value) > limit;
+    if (Number(quizCount.value) > limit) quizCount.value = '5';
+  };
+  quizTopic.addEventListener('change', updateLengths);
+  updateLengths();
+}
