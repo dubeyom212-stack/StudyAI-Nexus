@@ -1,0 +1,4 @@
+<form method="get" class="context-form">
+<div><label for="subject">Course</label><select id="subject" name="subject" data-course-select>{% for item in catalog %}<option {% if item == subject %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+{% if topic is defined %}<div><label for="topic">Topic</label><select id="topic" name="topic">{% for item in catalog[subject] %}<option {% if item == topic %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>{% endif %}
+<button class="button secondary">Open</button><noscript><p>When changing courses, choose Open again to select its topic.</p></noscript></form>
