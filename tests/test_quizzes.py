@@ -85,3 +85,24 @@ def test_bad_inputs_and_coverage(client):
     assert client.post(url+'/retry').status_code == 400
     for subject in SUBJECTS:
         assert client.get('/quizzes', query_string={'subject':subject}).status_code == 200
+
+def test_hosted_entry_point_uses_private_storage_without_ai(tmp_path, monkeypatch):
+    import os
+    import runpy
+    from pathlib import Path
+    for name in ('DATABASE_URL', 'SECRET_KEY', 'AI_PROVIDER', 'COOKIE_SECURE'):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(Path, 'home', lambda: tmp_path)
+    # Track environment mutations so pytest restores them after importing the entry point.
+    for name in ('DATABASE_URL', 'SECRET_KEY', 'AI_PROVIDER', 'COOKIE_SECURE'):
+        monkeypatch.setenv(name, '')
+        monkeypatch.delenv(name)
+    app = runpy.run_path(str(Path(__file__).parents[1] / 'pythonanywhere_wsgi.py'))['application']
+    assert app.config['SESSION_COOKIE_SECURE']
+    assert app.config['AI_PROVIDER'] == 'disabled'
+    assert (tmp_path / '.local/share/studyai-nexus/studyai.db').exists()
+    assert app.test_client().get('/').status_code == 200
+    with app.app_context():
+        assert not ai_service.connection_status()['available']
+        with pytest.raises(ai_service.AIUnavailable, match='Quizzes & tests'):
+            ai_service.generate(ai_service.TutorReply, 'test', {})

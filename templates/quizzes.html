@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Quizzes & tests · StudyAI Nexus{% endblock %}
 {% block content %}
-<p class="eyebrow">READY WHEN YOU ARE</p><h1>BUILD YOUR<br><span class="outline-type">NEXT SET.</span></h1>
-<p class="lede">Multiple-choice practice, instant scoring, and an explanation for every answer. No AI wait.</p>
+<p class="eyebrow">QUICK QUIZZES. NO WAITING.</p><h1>WHAT ARE YOU<br><span class="outline-type">STUDYING?</span></h1>
+<p class="lede">Multiple-choice practice, instant scoring, and an explanation for every answer. Get your results as soon as you finish.</p>
 <div class="two-grid">
 <section class="panel">
 <form method="get"><label for="quiz-subject">Subject</label><select id="quiz-subject" name="subject">{% for name in subjects %}<option {% if name == subject %}selected{% endif %}>{{ name }}</option>{% endfor %}</select><button class="button secondary">Choose subject</button></form>
 <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="subject" value="{{ subject }}">
-<label for="quiz-topic">Coverage</label><select id="quiz-topic" name="topic"><option data-count="{{ available }}">All topics</option>{% for name in filters %}<option data-count="10" {% if name == topic %}selected{% endif %}>{{ name }}</option>{% endfor %}</select>
-<label for="quiz-count">Set length</label><select id="quiz-count" name="count"><option value="5">Quick quiz · 5 questions</option><option value="10">Practice test · 10 questions</option>{% if available >= 20 %}<option value="20">Long practice test · 20 questions (all topics)</option>{% endif %}</select>
-<p class="small muted section"><span id="quiz-available">{{ available }}</span> questions available in the selected coverage. Each set uses distinct questions; separate sets may repeat items. Choose all topics for a 20-question set.</p><button class="button">Build my set →</button></form>
+<label for="quiz-topic">Topics</label><select id="quiz-topic" name="topic"><option data-count="{{ available }}">All topics</option>{% for name in filters %}<option data-count="10" {% if name == topic %}selected{% endif %}>{{ name }}</option>{% endfor %}</select>
+<label for="quiz-count">How many questions?</label><select id="quiz-count" name="count"><option value="5">Quick quiz · 5 questions</option><option value="10">Practice test · 10 questions</option>{% if available >= 20 %}<option value="20">Long practice test · 20 questions (all topics)</option>{% endif %}</select>
+<p class="small muted section"><span id="quiz-available">{{ available }}</span> questions available in the selected coverage. Each set uses distinct questions; separate sets may repeat items. Choose all topics for a 20-question set.</p><button class="button">Make my quiz →</button></form>
 </section>
-<aside><p class="eyebrow">WHAT YOU’LL PRACTICE</p><h2>{{ subject }}</h2><p>{{ topics|join(' · ') }}</p><div class="next-step"><h3>Finish, score, review.</h3><p>Save your progress whenever you need a break. Submit the complete set to unlock the answer key, explanations, and a retry of the questions you missed.</p></div><p class="small muted">Starter banks cover six subjects. The 26-course catalog is broader than the quiz bank. These original questions test selected fundamentals; they are not official AP questions or full exam simulations. Sets are untimed.</p></aside>
+<aside><p class="eyebrow">WHAT YOU’LL PRACTICE</p><h2>{{ subject }}</h2><p>{{ topics|join(' · ') }}</p><div class="next-step"><h3>See what you know.</h3><p>Save your progress whenever you need a break. Submit the complete set to unlock the answer key, explanations, and a retry of the questions you missed.</p></div><p class="small muted">Quizzes are available for six subjects so far. They cover a few key topics, not a whole AP course. These are our own practice questions, and there is no time limit.</p></aside>
 </div>
-<section class="section"><div class="section-heading"><h2>Your recent sets</h2></div><div class="topic-list">{% for row in history %}<a href="{{ url_for('quizzes.take', quiz_id=row.id) }}"><span>{{ row.subject }}<small>{{ row.created_at.strftime('%b %d') }} · {{ row.questions|length }} questions</small></span><span>{{ 'Review results →' if row.submitted else 'Resume →' }}</span></a>{% else %}<p class="muted">Your saved quizzes and results will appear here.</p>{% endfor %}</div></section>
+<section class="section"><div class="section-heading"><h2>Your quizzes</h2></div><div class="topic-list">{% for row in history %}<a href="{{ url_for('quizzes.take', quiz_id=row.id) }}"><span>{{ row.subject }}<small>{{ row.created_at.strftime('%b %d') }} · {{ row.questions|length }} questions</small></span><span>{{ 'Review results →' if row.submitted else 'Resume →' }}</span></a>{% else %}<p class="muted">Your saved quizzes and results will appear here.</p>{% endfor %}</div></section>
 {% endblock %}

@@ -1,13 +1,11 @@
 # StudyAI Nexus
 
-**Work through a question. Find the missing step. Try again.**
+StudyAI Nexus is a place to get some practice in before a test. Pick a subject,
+try a quiz, and check the explanations for anything you missed. You can save your
+work and come back later.
 
-StudyAI Nexus is an AP study workspace built with Flask. It brings together 26
-course topic guides, a local AI tutor, original practice questions, feedback on
-written answers, and a notebook of mistakes to revisit.
-
-The interface uses charcoal backgrounds, acid-yellow task panels, and a course
-list that keeps the next piece of work within reach.
+Quizzes run without an AI model or API key. There is also an optional AI tutor for
+written questions, but you do not need it to use the quiz section.
 
 [Get started](#run-locally) · [Local AI](#free-local-ai-with-ollama) ·
 [Configuration](#configuration) · [Troubleshooting](#troubleshooting) ·
@@ -31,16 +29,21 @@ sets list; they do not yet update the written-practice study plan or mistake not
 The local AI tutor and single-question written practice remain optional sections.
 Quizzes work with Ollama stopped and without any API key.
 
-## A typical session
+## Try it
 
-1. Create an account and add the AP courses you are taking.
-2. Pick a topic and generate a foundation, core, or challenge question.
-3. Write your reasoning, using a hint if you need a starting point.
-4. Read feedback against three criteria and compare with the reference solution.
-5. Return to the mistake notebook or follow your next study-plan task.
+1. Create an account and open **Quizzes & tests**.
+2. Choose your subject, topics, and number of questions.
+3. Answer at your own pace, or save the quiz for later.
+4. Submit to see your score and explanations.
+5. Retry the questions you missed.
 
-You can also ask the tutor to explain a step or check your reasoning. Plans use
-recent attempts and optional confidence ratings; they do not predict exam scores.
+The optional written-practice section has its own study plan and mistake notebook.
+Those results are separate from your quizzes.
+
+## Put it online
+
+[PythonAnywhere setup](PYTHONANYWHERE.md) covers the hosted quiz version, HTTPS,
+and keeping the database outside the source folder.
 
 ## Run locally
 
@@ -120,7 +123,7 @@ Ollama installation:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `AI_PROVIDER` | `ollama` | Select `ollama` or `openai`. |
+| `AI_PROVIDER` | `ollama` | Select `ollama`, `openai`, or `disabled` for quizzes without AI. |
 | `OLLAMA_URL` | `http://127.0.0.1:11434` | Address of the local model server. |
 | `OLLAMA_MODEL` | `qwen3:4b` | Installed model name, including its tag. |
 | `OPENAI_MODEL` | `gpt-4o-mini` | Model used when OpenAI is selected. |
