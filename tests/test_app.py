@@ -117,7 +117,7 @@ def test_practice_feedback_notebook_and_progress(client, app, ai):
     assert b'The final +1 was omitted.' in client.get('/mistakes').data
     assert b'Needs practice' in client.get('/galaxy', query_string=dict(subject=SUBJECT)).data
     assert b'2/3' in client.get('/profile').data
-    assert b'Fix the step' in client.get('/').data
+    assert FEEDBACK['next_step'].encode() in client.get('/').data
     client.post(location, data=dict(answer='Replacement'))
     assert ai.call_count == 2  # No repeated grading of a completed attempt.
     with app.app_context():

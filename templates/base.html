@@ -32,7 +32,7 @@
           </form>
         {% else %}
           <a href="{{ url_for('login') }}">Sign in</a>
-          <a class="button" href="{{ url_for('signup') }}">Get started</a>
+          <a class="button" href="{{ url_for('signup') }}">Create account</a>
         {% endif %}
       </div>
     </div>
@@ -45,7 +45,7 @@
   </header>
   <div class="main-shell">
     <div class="topbar">
-      <span>Your study space</span>
+      <span>{{ {'home':'Overview', 'courses':'Courses', 'plan':'Study plan', 'quizzes.builder':'Quizzes & tests', 'quizzes.take':'Quiz', 'practice':'Written practice', 'attempt':'Written practice', 'tutor':'AI tutor', 'mistakes':'Mistake notebook', 'galaxy':'Topic progress', 'profile':'Practice history', 'login':'Sign in', 'signup':'Create an account', 'diagnostic':'Topic ratings', 'connection':'AI connection', 'about':'About StudyAI'}.get(request.endpoint, 'StudyAI Nexus') }}</span>
       <time datetime="{{ today.isoformat() }}">{{ today.strftime('%A, %B') }} {{ today.day }}</time>
     </div>
     <main id="main">
@@ -55,9 +55,9 @@
       {% block content %}{% endblock %}
     </main>
     <footer>
-      <span>StudyAI Nexus <span class="footer-note">An independent student project.</span></span>
+      <span>StudyAI Nexus</span>
       <div class="footer-links">
-        <a href="{{ url_for('about') }}">About the project</a>
+        <a href="{{ url_for('about') }}">About StudyAI</a>
         <a href="{{ url_for('connection') }}">AI connection</a>
       </div>
     </footer>
