@@ -1,134 +1,114 @@
 {% extends 'base.html' %}
-
 {% block title %}Overview · StudyAI Nexus{% endblock %}
-
 {% block content %}
-<section class="galaxy-hero">
-  <div class="hero-copy">
-    <p class="eyebrow">
-      {% if current_user.is_authenticated %}
-        WELCOME BACK, {{ current_user.username }}
-      {% else %}
-        A LITTLE PRACTICE GOES A LONG WAY
-      {% endif %}
-    </p>
-    <h1>A little practice.<br><span>Infinite possibilities.</span></h1>
-    <p class="lede">Choose a subject. Build a set. Get your results.</p>
-    <div class="hero-actions">
-      <a class="button" href="{{ url_for('quizzes.builder') }}">Build a quiz or test ↗</a>
-      <a class="button secondary" href="{{ url_for('courses') }}">Explore courses →</a>
+<section class="desk-intro">
+  <div class="intro-copy">
+    {% if current_user.is_authenticated %}
+      <p class="eyebrow">Welcome back, {{ current_user.username }}.</p>
+      <h1>Pick up where<br>you left off.</h1>
+      <p class="lede">Your courses, your practice, and the things you're still working on.</p>
+    {% else %}
+      <p class="eyebrow">A study space of your own</p>
+      <h1>A place to<br>work things out.</h1>
+      <p class="lede">Try a few questions. Check your reasoning.<br class="desktop-break"> Come back to the parts that need another look.</p>
+      <a class="intro-link" href="{{ url_for('signup') }}">Set up your workspace</a>
+    {% endif %}
+  </div>
+  <section class="practice-launch" aria-labelledby="quick-practice-title">
+    <div class="launch-heading">
+      <svg class="line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="m8 9 1.5 1.5L12 8M14 9h2M8 15h8"/></svg>
+      <span>Quick practice</span>
     </div>
-  </div>
-  <div class="orbit-scene" aria-hidden="true">
-    <div class="orbit-halo"></div>
-    <div class="orbit-ring orbit-ring-one"></div>
-    <div class="orbit-ring orbit-ring-two"></div>
-    <div class="orbit-core">N</div>
-    <div class="orbit-star star-one"></div>
-    <div class="orbit-star star-two"></div>
-    <div class="orbit-star star-three"></div>
-    <div class="orbit-caption">YOUR LEARNING UNIVERSE</div>
-  </div>
+    <h2 id="quick-practice-title">Got a few minutes?</h2>
+    <p>Pick a subject and try a short quiz. Review the explanations when you're done.</p>
+    <a class="button" href="{{ url_for('quizzes.builder') }}">Make a quiz</a>
+    <p class="launch-detail">Multiple choice <span aria-hidden="true">·</span> Save and return anytime</p>
+  </section>
 </section>
 
-<div class="stats-strip" aria-label="Your activity">
-  <div>
-    <span class="metric-symbol">↗</span>
-    <strong>{{ done|length }}</strong>
-    <span>Written questions finished</span>
-  </div>
-  <div>
-    <span class="metric-symbol">▤</span>
-    <strong>{{ courses|length }}</strong>
-    <span>Active courses</span>
-  </div>
-  <div>
-    <span class="metric-symbol">↺</span>
-    <strong>{{ mistakes|length }}</strong>
-    <span>Written answers to revisit</span>
-  </div>
-</div>
+{% if current_user.is_authenticated %}
+<dl class="study-summary" aria-label="Written practice activity">
+  <div><dt>Active courses</dt><dd>{{ courses|length }}</dd></div>
+  <div><dt>Written questions finished</dt><dd>{{ done|length }}</dd></div>
+  <div><dt>Written answers to revisit</dt><dd>{{ mistakes|length }}</dd></div>
+</dl>
+{% endif %}
 
-<div class="workspace-grid">
-  <section>
+<div class="desk-grid">
+  <section class="course-section" aria-labelledby="your-courses-title">
     <div class="section-heading">
-      <h2>Your courses <span class="count-badge">{{ courses|length }}</span></h2>
-      <a href="{{ url_for('courses') }}">Browse all {{ catalog|length }} +</a>
+      <h2 id="your-courses-title">{{ 'Your courses' if current_user.is_authenticated else 'Find your subject' }}</h2>
+      <a href="{{ url_for('courses') }}">{{ 'Browse courses' if current_user.is_authenticated else 'All ' ~ catalog|length ~ ' courses' }}</a>
     </div>
     <div class="course-rows">
       {% for course in courses %}
         <a class="course-row" href="{{ url_for('plan', subject=course.subject) }}">
-          <span class="course-index">{{ '%02d'|format(loop.index) }}</span>
-          <div>
-            <span class="eyebrow">{{ course_category(course.subject) }}</span>
+          <span class="course-monogram" aria-hidden="true">{{ course.subject|replace('AP ', '')|first }}</span>
+          <div class="course-info">
             <h3>{{ course.subject }}</h3>
-            <p>{{ catalog[course.subject]|length }} topics <span>·</span> {{ course.minutes }} min sessions</p>
+            <p>{{ catalog[course.subject]|length }} topics <span aria-hidden="true">·</span> {{ course.minutes }} min sessions</p>
           </div>
-          <span class="row-arrow">↗</span>
+          <svg class="chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5"/></svg>
         </a>
       {% else %}
-        <div class="panel empty">
-          <h2>Choose your first course.</h2>
-          <p>Build a plan around what you're learning in class.</p>
-          <a class="button" href="{{ url_for('courses') if current_user.is_authenticated else url_for('signup') }}">Find my course →</a>
-        </div>
+        {% if current_user.is_authenticated %}
+          <div class="course-empty">
+            <svg class="line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5C8 2.5 3 4 3 4v15s5-1.5 9 1.5C16 17.5 21 19 21 19V4s-5-1.5-9 1.5Zm0 0v15"/></svg>
+            <h3>Start with what you're taking.</h3>
+            <p>Add a course to keep its topics and your study plan here.</p>
+            <a class="button secondary" href="{{ url_for('courses') }}">Add your first course</a>
+          </div>
+        {% else %}
+          {% for name in ['AP Calculus AB', 'AP Biology', 'AP United States History', 'AP Computer Science A'] %}
+            <a class="course-row" href="{{ url_for('plan', subject=name) }}">
+              <span class="course-monogram" aria-hidden="true">{{ name|replace('AP ', '')|first }}</span>
+              <div class="course-info"><h3>{{ name }}</h3><p>{{ course_category(name) }} <span aria-hidden="true">·</span> {{ catalog[name]|length }} topics</p></div>
+              <svg class="chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5"/></svg>
+            </a>
+          {% endfor %}
+        {% endif %}
       {% endfor %}
     </div>
-    <div class="section-heading section">
-      <h2>Tools for the hard parts</h2>
-    </div>
-    <div class="two-grid">
-      <a class="tool-card" href="{{ url_for('tutor') }}">
-        <span class="tool-symbol">?</span>
-        <h3>Need help with a step?</h3>
-        <p>Get a hint, ask why a step works, or check your reasoning.</p>
-        <span class="card-link">Ask a question →</span>
-      </a>
-      <a class="tool-card" href="{{ url_for('mistakes') }}">
-        <span class="tool-symbol">↺</span>
-        <h3>Look back at your mistakes</h3>
-        <p>Find your past written answers and try the parts you missed again.</p>
-        <span class="card-link">Open notebook →</span>
-      </a>
-    </div>
+    <p class="course-note">Course topic guides cover {{ catalog|length }} subjects. Multiple-choice quizzes are available for six.</p>
   </section>
 
-  <aside>
-    <section class="next-panel">
-      <div class="next-label">QUIZZES &amp; TESTS</div>
-      <h2>Your next breakthrough starts here.</h2>
-      <p>Build a practice set, answer at your own pace, and get a score with explanations as soon as you submit.</p>
-      <a class="button" href="{{ url_for('quizzes.builder') }}">Make a quiz →</a>
-      <div class="next-footer">CHOOSE <span>→</span> ANSWER <span>→</span> REVIEW</div>
-    </section>
-    <section class="panel section">
-      <div class="next-label"><span class="status-dot"></span>NEXT UP</div>
-      {% if pending %}
-        <h2>Finish your<br>last question.</h2>
-        <p>{{ pending[0].topic }}</p>
-        <a class="button" href="{{ url_for('attempt', attempt_id=pending[0].id) }}">Continue practice →</a>
-      {% elif mistakes %}
-        <h2>Fix the step<br>you missed.</h2>
-        <p>{{ mistakes[0].topic }}</p>
-        <p>{{ mistakes[0].feedback.next_step }}</p>
-        <a class="button" href="{{ url_for('attempt', attempt_id=mistakes[0].id) }}">Review feedback →</a>
-      {% elif courses %}
-        <h2>A focused<br>{{ courses[0].minutes }} minutes.</h2>
-        <p>{{ courses[0].subject }}</p>
-        <p>Try a question. See what your reasoning gets right—and what needs another look.</p>
-        <a class="button" href="{{ url_for('plan', subject=courses[0].subject) }}">Open my plan →</a>
-      {% else %}
-        <h2>Start with<br>one question.</h2>
-        <p>Choose a subject and find out where you stand by doing the work.</p>
-        <a class="button" href="{{ url_for('courses') if current_user.is_authenticated else url_for('signup') }}">Set up my courses →</a>
-      {% endif %}
-      <div class="next-footer">ATTEMPT <span>→</span> FEEDBACK <span>→</span> RETRY</div>
-    </section>
-    <div class="resource-note">
-      <h3>Studying for an AP exam?</h3>
-      <p>Pair your practice with the official course guides and released questions.</p>
-      <a href="https://apcentral.collegeboard.org/courses" target="_blank" rel="noopener">AP course resources ↗</a>
-    </div>
+  <aside class="session-note" aria-labelledby="next-session-title">
+    <p class="eyebrow" id="next-session-title">Your next session</p>
+    {% if pending %}
+      <h2>Finish your last question.</h2>
+      <p>{{ pending[0].topic }}</p>
+      <a class="button secondary" href="{{ url_for('attempt', attempt_id=pending[0].id) }}">Continue practice</a>
+    {% elif mistakes %}
+      <h2>Fix the step you missed.</h2>
+      <p>{{ mistakes[0].topic }}</p>
+      <p class="session-evidence">{{ mistakes[0].feedback.next_step }}</p>
+      <a class="button secondary" href="{{ url_for('attempt', attempt_id=mistakes[0].id) }}">Review feedback</a>
+    {% elif courses %}
+      <h2>{{ courses[0].minutes }} minutes on {{ courses[0].subject|replace('AP ', '') }}.</h2>
+      <p>Your plan starts with one topic. Write out your thinking, then check your work.</p>
+      <a class="button secondary" href="{{ url_for('plan', subject=courses[0].subject) }}">Open my plan</a>
+    {% else %}
+      <h2>Start with one topic.</h2>
+      <p>Add a course, check how familiar the topics feel, and build a plan for your next study session.</p>
+      <a class="button secondary" href="{{ url_for('courses') if current_user.is_authenticated else url_for('signup') }}">{{ 'Choose a course' if current_user.is_authenticated else 'Get started' }}</a>
+    {% endif %}
   </aside>
 </div>
+
+<section class="desk-tools" aria-labelledby="tools-title">
+  <h2 id="tools-title">When you need another look</h2>
+  <div class="tools-list">
+    <a class="tool-row" href="{{ url_for('mistakes') }}">
+      <svg class="line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM9 3v18M12 8h5M12 12h4"/></svg>
+      <div><h3>Mistake notebook</h3><p>Your past written answers and the steps to revisit.</p></div>
+      <svg class="chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5"/></svg>
+    </a>
+    <a class="tool-row" href="{{ url_for('tutor') }}">
+      <svg class="line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 1-8 8H4l1.7-4.2A8 8 0 1 1 20 11Z"/><path d="M9.5 8.5a2.5 2.5 0 0 1 5 .5c0 1.5-2.5 1.5-2.5 3M12 15h.01"/></svg>
+      <div><h3>Talk it through</h3><p>Ask the tutor about the part that doesn't click. AI connection required.</p></div>
+      <svg class="chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5"/></svg>
+    </a>
+  </div>
+</section>
+<p class="resource-note">Keep your class notes close. For exam coverage, use the <a href="https://apcentral.collegeboard.org/courses" target="_blank" rel="noopener">official AP course guides</a>.</p>
 {% endblock %}
