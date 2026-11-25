@@ -37,7 +37,7 @@ document.querySelectorAll('[data-course-select]').forEach(select => {
 document.querySelectorAll('form[data-busy]').forEach(form => {
   form.addEventListener('submit', () => {
     form.querySelector('button[type="submit"], button:not([type])').disabled = true;
-    form.querySelector('[data-status]').textContent = form.dataset.busy + ' Local AI can take a few minutes. Keep this page open.';
+    form.querySelector('[data-status]').textContent = form.dataset.busy + ' Keep this page open until it finishes.';
   });
 });
 
